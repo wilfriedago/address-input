@@ -1,35 +1,16 @@
-import React from "react";
+import { FormInputProps } from "../../interfaces";
 
-interface FormInputProps {
-  id: string;
-  name: string;
-  label: string;
-  dataListID: string;
-  dataList: string[];
-}
-
-const FormInput = (props: FormInputProps) => {
-  const handleInputEvent = (e: any) => {
-    console.log(e.target.value);
-  };
-
+const FormInput = ({ name, label, datalistID, datalist, onBlur }: FormInputProps) => {
   return (
     <div className="flex flex-col mx-2">
-      <label className="ml-2" htmlFor={props.id}>
-        {props.label}
+      <label className="ml-2" htmlFor={name}>
+        {label}
       </label>
-      <input
-        type="text"
-        className="input"
-        id={props.id}
-        name={props.name}
-        list={props.dataListID}
-        onInput={handleInputEvent}
-      />
-      <datalist id={props.dataListID}>
-        {props.dataList.map((country, index) => {
-          return React.createElement("option", { value: country, key: index });
-        })}
+      <input type="text" className="input" id={name} name={name} list={datalistID} onBlur={onBlur} required />
+      <datalist id={datalistID}>
+        {datalist.map((option: any, index) => (
+          <option key={index} value={option.name} data-iso2={option.iso2} />
+        ))}
       </datalist>
     </div>
   );
