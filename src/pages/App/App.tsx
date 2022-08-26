@@ -1,4 +1,4 @@
-import { useState } from "react";
+import DisplaySection from "../../components/DisplaySection";
 import Form from "../../components/Form";
 import Header from "../../components/Header";
 
@@ -8,6 +8,7 @@ const App = () => {
       <Header />
       <main>
         <Form />
+        <DisplaySection country="Benin" state="Littoral" city="Cotonou" />
       </main>
     </div>
   );

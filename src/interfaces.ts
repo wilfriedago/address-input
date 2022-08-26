@@ -3,7 +3,18 @@ export interface FormInputProps {
   label: string;
   datalistID: string;
   datalist: {}[];
-  onBlur: any;
+  onChange: any;
+}
+
+export interface DisplaySectionProps {
+  country: string;
+  state: string;
+  city: string;
+}
+
+export interface DatalistProps {
+  id: string;
+  list: {}[];
 }
 
 export interface apiData {

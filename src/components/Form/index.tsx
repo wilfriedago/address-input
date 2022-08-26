@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import { apiData } from "../../interfaces";
 import FormInput from "./FormInput";
-import {
-  getAllCountries,
-  getCitiesByCountry,
-  getCitiesByCountryAndState,
-  getStatesByCountry,
-} from "../../services/ApiServices";
+import { getAllCountries, getCitiesByCountryAndState, getStatesByCountry } from "../../services/ApiServices";
 
 const Form = () => {
   // Données provenant de l'API
@@ -50,12 +45,15 @@ const Form = () => {
   }, []);
 
   // --------------Handlers--------------------------------------
-  const handleBlur = (e: any) => {
+  const handleChange = (e: any) => {
     let list = inputs.find((i) => i.name === e.target.name)?.datalist;
     let iso2 = getIsoCode(e.target.value, list);
 
     if (iso2 || existInList(e.target.value, list))
       setValues({ ...values, [e.target.name]: { name: e.target.value, iso2: iso2 } });
+
+    updateData();
+    // simulatedUpdateData();
   };
 
   const handleSubmit = (e: any) => {
@@ -76,28 +74,24 @@ const Form = () => {
 
   // Fonction permettant de mettre à jour les données vis à vis de l'API
   const updateData = async () => {
-    let countryCode = values.country.iso2;
-    let stateCode = values.state.iso2;
-
-    if (countryCode) {
+    if (values.country.iso2 !== "") {
       // We fetch states data based on country
-      setData({ ...data, states: await getStatesByCountry(countryCode) });
-
-      // We fetch cities data based on country
-      setData({ ...data, cities: await getCitiesByCountry(countryCode) });
-    } else if (countryCode && stateCode) {
-      // We fetch cities data based on country & state
-      setData({ ...data, cities: await getCitiesByCountryAndState(countryCode, stateCode) });
+      setData({ ...data, states: await getStatesByCountry(values.country.iso2) });
     } else {
       // We fetch all countries data
       setData({ ...data, countries: await getAllCountries() });
+    }
+
+    if (values.country.iso2 !== "" && values.state.iso2 !== "") {
+      // We fetch cities data based on country & state
+      setData({ ...data, cities: await getCitiesByCountryAndState(values.country.iso2, values.state.iso2) });
     }
   };
 
   return (
     <form className="form" onSubmit={handleSubmit}>
       {inputs.map((input, index) => (
-        <FormInput key={index} onBlur={handleBlur} {...input} />
+        <FormInput key={index} onChange={handleChange} {...input} />
       ))}
       <button type="submit" className="button">
         Soumettre
