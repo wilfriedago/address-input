@@ -3,7 +3,7 @@ export interface FormInputProps {
   label: string;
   datalistID: string;
   datalist: {}[];
-  onChange: any;
+  onBlur: any;
 }
 
 export interface DisplaySectionProps {
