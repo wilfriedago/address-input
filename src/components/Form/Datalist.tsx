@@ -1,4 +1,4 @@
-import { apiData, DatalistProps } from "../../interfaces";
+import { DatalistProps } from "../../interfaces";
 
 const Datalist = ({ id, list }: DatalistProps) => {
   return (
