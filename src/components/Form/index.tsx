@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { apiData } from "../../interfaces";
+import { apiData, FormProps } from "../../interfaces";
 import FormInput from "./FormInput";
 import { getAllCountries, getCitiesByCountryAndState, getStatesByCountry } from "../../services/ApiServices";
 
-const Form = () => {
+const Form = ({ setFormValues }: FormProps) => {
   // Données provenant de l'API
   const [data, setData] = useState<{ countries: apiData[]; states: apiData[]; cities: apiData[] }>({
     countries: [],
@@ -57,6 +57,7 @@ const Form = () => {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
+    setFormValues({ country: values.country.name, state: values.state.name, city: values.city.name });
     console.log(values);
   };
   // --------------Handlers--------------------------------------
