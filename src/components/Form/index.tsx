@@ -42,18 +42,17 @@ const Form = () => {
 
   useEffect(() => {
     updateData();
-  }, []);
+  }, [values]);
 
   // --------------Handlers--------------------------------------
-  const handleChange = (e: any) => {
+  const handleBlur = async (e: any) => {
     let list = inputs.find((i) => i.name === e.target.name)?.datalist;
     let iso2 = getIsoCode(e.target.value, list);
 
     if (iso2 || existInList(e.target.value, list))
-      setValues({ ...values, [e.target.name]: { name: e.target.value, iso2: iso2 } });
-
-    updateData();
-    // simulatedUpdateData();
+      setValues((values) => {
+        return { ...values, [e.target.name]: { name: e.target.value, iso2: iso2 } };
+      });
   };
 
   const handleSubmit = (e: any) => {
@@ -74,24 +73,18 @@ const Form = () => {
 
   // Fonction permettant de mettre à jour les données vis à vis de l'API
   const updateData = async () => {
-    if (values.country.iso2 !== "") {
-      // We fetch states data based on country
-      setData({ ...data, states: await getStatesByCountry(values.country.iso2) });
-    } else {
-      // We fetch all countries data
-      setData({ ...data, countries: await getAllCountries() });
-    }
+    if (data.countries.length === 0) setData({ ...data, countries: await getAllCountries() });
 
-    if (values.country.iso2 !== "" && values.state.iso2 !== "") {
-      // We fetch cities data based on country & state
+    if (values.country.iso2) setData({ ...data, states: await getStatesByCountry(values.country.iso2) });
+
+    if (values.country.iso2 && values.state.iso2)
       setData({ ...data, cities: await getCitiesByCountryAndState(values.country.iso2, values.state.iso2) });
-    }
   };
 
   return (
     <form className="form" onSubmit={handleSubmit}>
       {inputs.map((input, index) => (
-        <FormInput key={index} onChange={handleChange} {...input} />
+        <FormInput key={index} onBlur={handleBlur} {...input} />
       ))}
       <button type="submit" className="button">
         Soumettre
