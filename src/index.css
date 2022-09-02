@@ -11,6 +11,10 @@
     @apply bg-slate-200 bg-opacity-90 focus:bg-opacity-100 p-2 mb-3 border-b-2 focus:outline-none focus:border-b-blue-400 transition duration-300 ease-in-out;
   }
 
+  .error {
+    @apply bg-red-200 border-b-red-500;
+  }
+
   .button {
     @apply px-3 py-2 h-12 w-3/4 text-white font-semibold bg-blue-500 bg-opacity-90 hover:bg-opacity-100 hover:drop-shadow-lg rounded transition duration-300 ease-in-out;
   }

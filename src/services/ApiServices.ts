@@ -1,5 +1,4 @@
 import axios from "axios";
-import { apiData } from "../interfaces";
 
 // FIXME: Chargement de l'apiKey depuis les variables d'environnement
 // const apiKey: string = process.env.REACT_APP_API_KEY as string;
@@ -7,8 +6,7 @@ import { apiData } from "../interfaces";
 // Configuration de base d'axios
 const api = axios.create({
   baseURL: "https://api.countrystatecity.in/v1/countries",
-  timeout: 5000,
-  headers: { "X-CSCAPI-KEY": "PUT_YOUR_API_KEY_HERE" },
+  headers: { "X-CSCAPI-KEY": "eE1EdTAxanhWN3VtdEROYzJDU1JpTUdrNUxMbEdFNWF1M2QwSjBhYg==" },
 });
 
 // Handler d'erreurs
@@ -37,17 +35,6 @@ export const getAllCountries = async () => {
 export const getStatesByCountry = async (country: string) => {
   try {
     return await api.get(`/${country}/states/`).then((response) => {
-      return response.data;
-    });
-  } catch (error) {
-    return handleError(error);
-  }
-};
-
-// Récupération de la liste des villes par pays
-export const getCitiesByCountry = async (country: string) => {
-  try {
-    return await api.get(`/${country}/cities/`).then((response) => {
       return response.data;
     });
   } catch (error) {

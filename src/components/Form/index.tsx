@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { apiData, FormProps } from "../../interfaces";
-import FormInput from "./FormInput";
+import { FormProps } from "../../interfaces";
 import { getAllCountries, getCitiesByCountryAndState, getStatesByCountry } from "../../services/ApiServices";
+import FormInput from "./FormField";
 
 const Form = ({ setFormValues }: FormProps) => {
   // Données provenant de l'API
-  const [data, setData] = useState<{ countries: apiData[]; states: apiData[]; cities: apiData[] }>({
+  const [data, setData] = useState({
     countries: [],
     states: [],
     cities: [],
@@ -19,24 +19,21 @@ const Form = ({ setFormValues }: FormProps) => {
   });
 
   // Liste des champs du formulaire
-  const inputs = [
+  const selects = [
     {
       name: "country",
       label: "Pays",
-      datalistID: "countries",
-      datalist: data.countries,
+      options: data.countries,
     },
     {
       name: "state",
       label: "Département",
-      datalistID: "states",
-      datalist: data.states,
+      options: data.states,
     },
     {
       name: "city",
       label: "Ville",
-      datalistID: "cities",
-      datalist: data.cities,
+      options: data.cities,
     },
   ];
 
@@ -45,47 +42,60 @@ const Form = ({ setFormValues }: FormProps) => {
   }, [values]);
 
   // --------------Handlers--------------------------------------
-  const handleBlur = async (e: any) => {
-    let list = inputs.find((i) => i.name === e.target.name)?.datalist;
-    let iso2 = getIsoCode(e.target.value, list);
-
-    if (iso2 || existInList(e.target.value, list))
-      setValues((values) => {
-        return { ...values, [e.target.name]: { name: e.target.value, iso2: iso2 } };
-      });
+  const handleChange = (option: { name: string; iso2: string; type: string }) => {
+    setValues({ ...values, [option.type]: { name: option.name, iso2: option.iso2 } });
+    /**
+ *     if (option.type === "country") {
+      setValues({ ...values, state: { name: "", iso2: "" }, city: { name: "" } });
+    }
+ */
   };
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    setFormValues({ country: values.country.name, state: values.state.name, city: values.city.name });
-    console.log(values);
+
+    let errors = validateForm();
+
+    if (!errors) {
+      setFormValues({ country: values.country.name, state: values.state.name, city: values.city.name });
+    } else {
+      displayErrors(errors as string[]);
+    }
   };
   // --------------Handlers--------------------------------------
 
-  // Fonction permettant de récupérer le code iso2 d'une valeur
-  const getIsoCode = (value: string, valuesList: apiData[] | undefined) => {
-    return valuesList !== undefined ? valuesList.find((listValue) => listValue.name === value)?.iso2 : undefined;
-  };
-
-  // Fonction permettant de vérifier si une valeur existe dans une liste
-  const existInList = (value: string, valuesList: apiData[] | undefined) => {
-    return valuesList !== undefined ? valuesList.some((listValue) => listValue.name === value) : false;
-  };
-
   // Fonction permettant de mettre à jour les données vis à vis de l'API
   const updateData = async () => {
-    if (data.countries.length === 0) setData({ ...data, countries: await getAllCountries() });
+    if (data.countries.length === 0) {
+      setData({ ...data, countries: await getAllCountries() });
+    }
 
-    if (values.country.iso2) setData({ ...data, states: await getStatesByCountry(values.country.iso2) });
+    if (values.country.iso2 && !values.state.iso2) {
+      setData({ ...data, states: await getStatesByCountry(values.country.iso2) });
+    }
 
-    if (values.country.iso2 && values.state.iso2)
+    if (values.country.iso2 && values.state.iso2 && !values.city.name) {
       setData({ ...data, cities: await getCitiesByCountryAndState(values.country.iso2, values.state.iso2) });
+    }
   };
+
+  // Fonction permettant de validé le formulaire
+  const validateForm = (): boolean | string[] => {
+    let errors: string[] = [];
+    if (values.country.name === "") errors.push("Le champ n'est pas valide");
+    if (values.state.name === "") errors.push("Le champ département n'est pas valide");
+    if (values.city.name === "") errors.push("Le champ ville n'est pas valide");
+    return errors.length === 0 ? false : errors;
+  };
+
+  // Fonction permettant d'afficher les erreurs
+  // TODO : Write this function
+  const displayErrors = (errors: string[]) => {};
 
   return (
     <form className="form" onSubmit={handleSubmit}>
-      {inputs.map((input, index) => (
-        <FormInput key={index} onBlur={handleBlur} {...input} />
+      {selects.map((select, index) => (
+        <FormInput key={index} onChange={handleChange} {...select} />
       ))}
       <button type="submit" className="button">
         Soumettre

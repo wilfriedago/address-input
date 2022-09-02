@@ -2,23 +2,17 @@ export interface FormProps {
   setFormValues: any;
 }
 
-export interface FormInputProps {
+export interface FormFieldProps {
   name: string;
   label: string;
-  datalistID: string;
-  datalist: {}[];
-  onBlur: any;
+  onChange: any;
+  options: {}[];
 }
 
 export interface DisplaySectionProps {
   country: string;
   state: string;
   city: string;
-}
-
-export interface DatalistProps {
-  id: string;
-  list: {}[];
 }
 
 export interface apiData {
